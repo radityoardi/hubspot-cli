@@ -1,3 +1,6 @@
+name: Manual Run
+run-name: Manual Run ${{github.run_id}}
+
 on:
   workflow_dispatch:
 
