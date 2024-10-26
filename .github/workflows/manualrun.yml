@@ -15,14 +15,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: radityoardi/hubspot-local-dev-lib
-          path: hubspot-local-dev-lib
+          path: /home/runner/work/hubspot-cli/hubspot-local-dev-lib
           token: ${{secrets.HUBSPOT_REPOTOKEN}}
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
+      - name: Install YARN
+        run: |
+          npm install -g yarn
+      - name: Build everything
+        run: |
+          cd ..
+          cd ./hubspot-local-dev-lib/
+          yarn install
+          yarn link
+
+          cd ..
+          cd ./hubspot-cli/
+          yarn link @hubspot/local-dev-lib
+          yarn install
+
       - name: DEBUG
         shell: pwsh
         run: |
-          Get-ChildItem -Recurse /home/runner | ForEach-Object { $_.FullName }
+          Get-ChildItem -Recurse /home/runner/hubspot-cli | ForEach-Object { $_.FullName }
     

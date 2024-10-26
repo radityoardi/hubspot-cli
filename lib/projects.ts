@@ -252,8 +252,12 @@ const ensureProjectExists = async (
     const { data: project } = withPolling
       ? await pollFetchProject(accountId, projectName)
       : await fetchProject(accountId, projectName);
-    return { projectExists: !!project, project };
+    const retval = { projectExists: !!project, project };
+    logger.debug(`ensureProjectExists success`);
+    logger.debug(retval);
+    return retval;
   } catch (err) {
+    logger.debug(err);
     if (isSpecifiedError(err, { statusCode: 404 })) {
       let shouldCreateProject = forceCreate;
       if (allowCreate && !shouldCreateProject) {
@@ -282,6 +286,7 @@ const ensureProjectExists = async (
           );
           return { projectExists: true, project };
         } catch (err) {
+          logger.debug(`[ensureProjectExists] Error when creating project`);
           return logError(err, new ApiErrorContext({ accountId }));
         }
       } else {
@@ -303,6 +308,10 @@ const ensureProjectExists = async (
     ) {
       logger.error(err.message);
       process.exit(EXIT_CODES.ERROR);
+    }
+    if (isSpecifiedError(err, { statusCode: 400 })) {
+      logger.error(`400 BAD REQUEST`);
+
     }
     logError(err, new ApiErrorContext({ accountId }));
     process.exit(EXIT_CODES.ERROR);
