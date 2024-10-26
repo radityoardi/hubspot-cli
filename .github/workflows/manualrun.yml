@@ -6,11 +6,23 @@ on:
 
 jobs:
   build:
+    name: Build Package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout hubspot-cli
+        uses: actions/checkout@v4
+      - name: Checkout @radityoardi/hubspot-local-dev-lib
+        uses: actions/checkout@v4
+        with:
+          repository: radityoardi/hubspot-local-dev-lib
+          path: hubspot-local-dev-lib
+          token: ${{secrets.HUBSPOT_REPOTOKEN}}
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
+      - name: DEBUG
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse /home/runner | ForEach-Object { $_.FullName }
     
