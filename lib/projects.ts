@@ -247,13 +247,18 @@ const ensureProjectExists = async (
     uploadCommand = false,
   } = {}
 ) => {
+  const keyInfo = 'RD:';
+  logger.log(`${keyInfo} running uiAccountDescription.`);
   const accountIdentifier = uiAccountDescription(accountId);
   try {
+    logger.log(`${keyInfo} running fetchProject`);
     const { data: project } = withPolling
       ? await pollFetchProject(accountId, projectName)
       : await fetchProject(accountId, projectName);
+
+    logger.log(`${keyInfo} `);
     const retval = { projectExists: !!project, project };
-    logger.debug(`ensureProjectExists success`);
+    logger.log(`${keyInfo} ensureProjectExists success.`);
     logger.debug(retval);
     return retval;
   } catch (err) {
@@ -277,6 +282,9 @@ const ensureProjectExists = async (
 
       if (shouldCreateProject) {
         try {
+          logger.log(
+            `${keyInfo} project ${projectName} doesn't exist. Creating...`
+          );
           const { data: project } = await createProject(accountId, projectName);
           logger.success(
             i18n(`${i18nKey}.ensureProjectExists.createSuccess`, {
@@ -311,7 +319,6 @@ const ensureProjectExists = async (
     }
     if (isSpecifiedError(err, { statusCode: 400 })) {
       logger.error(`400 BAD REQUEST`);
-
     }
     logError(err, new ApiErrorContext({ accountId }));
     process.exit(EXIT_CODES.ERROR);

@@ -78,6 +78,9 @@ const getPortalData = mappedPortalData => {
 };
 
 exports.handler = async options => {
+  logger.log(
+    `Modification key from Ardi: You are currently running hs accounts list.`
+  );
   await loadAndValidateOptions(options, false);
 
   const accountId = getAccountId(options);

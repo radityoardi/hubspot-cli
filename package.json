@@ -45,9 +45,9 @@
     "typescript": "^5.6.2"
   },
   "scripts": {
-    "build": "bash ./scripts/build.sh",
+    "build": "pwsh -c ./scripts/build.ps1",
     "lint": "eslint . && prettier --list-different ./**/*.{js,json}",
-    "prettier:write": "prettier --write ./**/*.{js,json}",
+    "prettier:write": "prettier --write ./**/*.{js,json,ts,scss,css}",
     "test": "jest",
     "test-cli": "yarn --cwd 'acceptance-tests' test-ci",
     "test-cli-debug": "yarn --cwd 'acceptance-tests' test-debug",
@@ -56,7 +56,11 @@
     "build-docker": "docker image build --tag hs-cli-image . && docker image prune -f",
     "circular-deps": "yarn madge --circular .",
     "release": "bash ./scripts/release.sh",
-    "hs": "yarn build && node ./dist/bin/hs"
+    "hs": "yarn build && node ./dist/bin/hs",
+    "hs-debug": "yarn build && node --inspect-brk ./dist/bin/hs",
+    "wipe": "rmdir /S /Q node_modules && rmdir /S /Q dist",
+    "link-local-dev-lib": "yarn link '@hubspot/local-dev-lib'",
+    "compress-dist": "pwsh -c \"Compress-Archive -Path dist\\* -DestinationPath dist.zip\" -Force"
   },
   "lint-staged": {
     "**/*.{js,ts,scss,css}": [

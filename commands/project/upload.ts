@@ -32,25 +32,40 @@ exports.command = 'upload [path] [--forceCreate] [--message]';
 exports.describe = uiBetaTag(i18n(`${i18nKey}.describe`), false);
 
 exports.handler = async options => {
+  const keyInfo = `RD:`;
+  logger.log(
+    `${keyInfo} You are running hs project upload, load and validate options.`
+  );
   await loadAndValidateOptions(options);
 
   const { forceCreate, path: projectPath, message } = options;
+  logger.log(`${keyInfo} running getAccountId.`);
   const accountId = getAccountId(options);
+  logger.log(`${keyInfo} running getAccountConfig.`);
   const accountConfig = getAccountConfig(accountId);
+  logger.log(`${keyInfo} accountConfig result is >> ${accountConfig}`);
   const accountType = accountConfig && accountConfig.accountType;
 
+  logger.log(`${keyInfo} running trackCommandUsage.`);
   trackCommandUsage('project-upload', { type: accountType }, accountId);
 
+  logger.log(`${keyInfo} running getProjectConfig.`);
   const { projectConfig, projectDir } = await getProjectConfig(projectPath);
+  logger.log(`${keyInfo} projectConfig and projectDir dump.`);
+  logger.log(projectConfig);
+  logger.log(projectDir);
 
+  logger.log(`${keyInfo} running validateProjectConfig.`);
   validateProjectConfig(projectConfig, projectDir);
 
+  logger.log(`${keyInfo} running ensureProjectExists.`);
   await ensureProjectExists(accountId, projectConfig.name, {
     forceCreate,
     uploadCommand: true,
   });
 
   try {
+    logger.log(`${keyInfo} running handleProjectUpload`);
     const result = await handleProjectUpload(
       accountId,
       projectConfig,
@@ -60,6 +75,7 @@ exports.handler = async options => {
     );
 
     if (result.uploadError) {
+      logger.log(`${keyInfo} goes into uploadError.`);
       if (
         isSpecifiedError(result.uploadError, {
           subCategory: PROJECT_ERROR_TYPES.PROJECT_LOCKED,
