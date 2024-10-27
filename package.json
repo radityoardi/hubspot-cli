@@ -46,7 +46,7 @@
   },
   "scripts": {
     "build": "pwsh -c ./scripts/build.ps1",
-    "lint": "eslint . && prettier --list-different ./**/*.{js,json}",
+    "lint": "eslint . && prettier --list-different ./**/*.{js,json,ts,scss,css}",
     "prettier:write": "prettier --write ./**/*.{js,json,ts,scss,css}",
     "test": "jest",
     "test-cli": "yarn --cwd 'acceptance-tests' test-ci",
